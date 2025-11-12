@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # EndeMonat - Expense and Budget Management System
 
 ## Projektinformationen
@@ -139,4 +138,4 @@ Die Anwendung stellt Health-Check-Endpunkte über Spring Boot Actuator bereit:
 - Erweiterte Budgetregeln und Benachrichtigungen
 =======
 # endeMonat
->>>>>>> ca686c8008a46e07bd2eff85fe9b4137f3161725
+
