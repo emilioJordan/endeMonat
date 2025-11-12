@@ -159,6 +159,9 @@ public class TransactionService {
      * Create a new transaction
      */
     public Transaction createTransaction(Transaction transaction) {
+        if (transaction == null) {
+            throw new IllegalArgumentException("Transaction cannot be null");
+        }
         if (transaction.getDate() == null) {
             transaction.setDate(LocalDateTime.now());
         }

@@ -1,7 +1,6 @@
 package com.endemonat.application.controller;
 
 import com.endemonat.application.service.BudgetAnalysisService;
-import com.endemonat.application.service.SmartCategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,11 +18,9 @@ import java.util.Map;
 public class BudgetAnalysisController {
 
     private final BudgetAnalysisService budgetAnalysisService;
-    private final SmartCategoryService smartCategoryService;
 
-    public BudgetAnalysisController(BudgetAnalysisService budgetAnalysisService, SmartCategoryService smartCategoryService) {
+    public BudgetAnalysisController(BudgetAnalysisService budgetAnalysisService) {
         this.budgetAnalysisService = budgetAnalysisService;
-        this.smartCategoryService = smartCategoryService;
     }
 
     /**
@@ -76,10 +73,12 @@ public class BudgetAnalysisController {
      * Advanced AI-like analysis of spending patterns
      */
     @GetMapping("/category-intelligence")
-    public ResponseEntity<SmartCategoryService.CategoryIntelligenceReport> getCategoryIntelligence() {
+    public ResponseEntity<Map<String, Object>> getCategoryIntelligence() {
         try {
-            SmartCategoryService.CategoryIntelligenceReport report = 
-                smartCategoryService.analyzeCategoryIntelligence();
+            Map<String, Object> report = Map.of(
+                "message", "Smart Category Intelligence feature under development",
+                "status", "TDD_PHASE"
+            );
             return ResponseEntity.ok(report);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();

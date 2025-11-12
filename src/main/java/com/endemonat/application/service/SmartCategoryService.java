@@ -1,31 +1,851 @@
-package com.endemonat.application.service;
+package com.endemonat.application.service;package com.endemonat.application.service;package com.endemonat.application.service;
+
+
 
 import com.endemonat.application.entity.Category;
-import com.endemonat.application.entity.Transaction;
-import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDate;
+import com.endemonat.application.entity.Transaction;
+
+import com.endemonat.application.repository.CategoryRepository;import com.endemonat.application.entity.Category;import com.endemonat.application.entity.Category;
+
+import com.endemonat.application.repository.TransactionRepository;
+
+import org.springframework.stereotype.Service;import com.endemonat.application.entity.Transaction;import com.endemonat.application.entity.Transaction;
+
+
+
+import java.math.BigDecimal;import com.endemonat.application.repository.CategoryRepository;import com.endemonat.application.repository.CategoryRepository;
+
 import java.time.LocalDateTime;
-import java.util.*;
+
+import java.util.*;import com.endemonat.application.repository.TransactionRepository;import com.endemonat.application.repository.TransactionRepository;
+
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;import org.springframework.stereotype.Service;
+
 /**
- * Smart Category Intelligence Service
- * Provides complex analysis and recommendations for spending categories
- * 
+
+ * Smart Category Intelligence Service - TDD Implementation
+
  * @author Emilio und Leander
- */
+
+ */import java.math.BigDecimal;import java.math.BigDecimal;
+
 @Service
-public class SmartCategoryService {
 
-    private final CategoryService categoryService;
-    private final TransactionService transactionService;
+public class SmartCategoryService {import java.time.LocalDateTime;import java.math.RoundingMode;
 
-    public SmartCategoryService(CategoryService categoryService, TransactionService transactionService) {
-        this.categoryService = categoryService;
-        this.transactionService = transactionService;
+
+
+    private final CategoryRepository categoryRepository;import java.util.*;import java.time.LocalDate;
+
+    private final TransactionRepository transactionRepository;
+
+import java.util.stream.Collectors;import java.time.LocalDateTime;
+
+    public SmartCategoryService(CategoryRepository categoryRepository,
+
+                              TransactionRepository transactionRepository) {import java.util.*;
+
+        this.categoryRepository = categoryRepository;
+
+        this.transactionRepository = transactionRepository;/**import java.util.stream.Collectors;
+
+    }
+
+ * Smart Category Intelligence Service
+
+    public String predictCategory(Transaction transaction) {
+
+        if (transaction == null || transaction.getDescription() == null) { * Provides TDD-developed AI-like category prediction and analysis/**
+
+            return null;
+
+        } *  * Smart Category Intelligence Service
+
+
+
+        List<Category> availableCategories = categoryRepository.findByIsActiveTrue(); * @author Emilio und Leander * Provides complex analysis and recommendations for spending categories
+
+        if (availableCategories.isEmpty()) {
+
+            return null; */ * 
+
+        }
+
+@Service * @author Emilio und Leander
+
+        String[] keywords = extractKeywords(transaction.getDescription());
+
+        Map<String, Integer> categoryMatches = new HashMap<>();public class SmartCategoryService { */
+
+
+
+        for (String keyword : keywords) {@Service
+
+            List<Transaction> historicalTransactions = 
+
+                transactionRepository.findByDescriptionContainingIgnoreCase(keyword);    private final CategoryService categoryService;public class SmartCategoryService {
+
+            
+
+            for (Transaction historical : historicalTransactions) {    private final TransactionService transactionService;
+
+                if (historical.getCategoryId() != null) {
+
+                    categoryMatches.merge(historical.getCategoryId(), 1, Integer::sum);    private final CategoryRepository categoryRepository;    private final CategoryService categoryService;
+
+                }
+
+            }    private final TransactionRepository transactionRepository;    private final TransactionService transactionService;
+
+        }
+
+    private final CategoryRepository categoryRepository;
+
+        return categoryMatches.entrySet().stream()
+
+            .max(Map.Entry.comparingByValue())    public SmartCategoryService(CategoryService categoryService,     private final TransactionRepository transactionRepository;
+
+            .map(Map.Entry::getKey)
+
+            .orElse(null);                              TransactionService transactionService,
+
+    }
+
+                              CategoryRepository categoryRepository,    public SmartCategoryService(CategoryService categoryService, 
+
+    public CategoryPrediction predictCategoryWithConfidence(Transaction transaction) {
+
+        String categoryId = predictCategory(transaction);                              TransactionRepository transactionRepository) {                              TransactionService transactionService,
+
+        if (categoryId == null) {
+
+            return null;        this.categoryService = categoryService;                              CategoryRepository categoryRepository,
+
+        }
+
+        this.transactionService = transactionService;                              TransactionRepository transactionRepository) {
+
+        String[] keywords = extractKeywords(transaction.getDescription());
+
+        int totalMatches = 0;        this.categoryRepository = categoryRepository;        this.categoryService = categoryService;
+
+        
+
+        for (String keyword : keywords) {        this.transactionRepository = transactionRepository;        this.transactionService = transactionService;
+
+            List<Transaction> historicalTransactions = 
+
+                transactionRepository.findByDescriptionContainingIgnoreCase(keyword);    }        this.categoryRepository = categoryRepository;
+
+            totalMatches += historicalTransactions.size();
+
+        }        this.transactionRepository = transactionRepository;
+
+
+
+        double confidence = Math.min(1.0, totalMatches / 10.0);    // TDD IMPLEMENTATION: AI-basierte Kategorie-Vorhersage    }
+
+        return new CategoryPrediction(categoryId, confidence);
+
+    }
+
+
+
+    public List<CategoryPrediction> predictTopCategories(Transaction transaction, int limit) {    /**    // TDD IMPLEMENTATION: AI-basierte Kategorie-Vorhersage
+
+        if (transaction == null || transaction.getDescription() == null) {
+
+            return new ArrayList<>();     * Predicts category for a transaction based on historical data
+
+        }
+
+     */    /**
+
+        String[] keywords = extractKeywords(transaction.getDescription());
+
+        Map<String, Integer> categoryMatches = new HashMap<>();    public String predictCategory(Transaction transaction) {     * Predicts category for a transaction based on historical data
+
+
+
+        for (String keyword : keywords) {        if (transaction == null || transaction.getDescription() == null) {     */
+
+            List<Transaction> historicalTransactions = 
+
+                transactionRepository.findByDescriptionContainingIgnoreCase(keyword);            return null;    public String predictCategory(Transaction transaction) {
+
+            
+
+            for (Transaction historical : historicalTransactions) {        }        if (transaction == null || transaction.getDescription() == null) {
+
+                if (historical.getCategoryId() != null) {
+
+                    categoryMatches.merge(historical.getCategoryId(), 1, Integer::sum);            return null;
+
+                }
+
+            }        List<Category> availableCategories = categoryRepository.findByIsActiveTrue();        }
+
+        }
+
+        if (availableCategories.isEmpty()) {
+
+        return categoryMatches.entrySet().stream()
+
+            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())            return null;        List<Category> availableCategories = categoryRepository.findByIsActiveTrue();
+
+            .limit(limit)
+
+            .map(entry -> {        }        if (availableCategories.isEmpty()) {
+
+                double confidence = Math.min(1.0, entry.getValue() / 10.0);
+
+                return new CategoryPrediction(entry.getKey(), confidence);            return null;
+
+            })
+
+            .collect(Collectors.toList());        // Extract keywords from description        }
+
+    }
+
+        String[] keywords = extractKeywords(transaction.getDescription());
+
+    public Map<String, SpendingPattern> analyzeSpendingPatterns(String categoryId) {
+
+        LocalDateTime endDate = LocalDateTime.now();        Map<String, Integer> categoryMatches = new HashMap<>();        // Extract keywords from description
+
+        LocalDateTime startDate = endDate.minusMonths(3);
+
+                String[] keywords = extractKeywords(transaction.getDescription());
+
+        List<Transaction> transactions = transactionRepository
+
+            .findByCategoryIdAndDateBetween(categoryId, startDate, endDate);        // Search for historical transactions with similar keywords        Map<String, Integer> categoryMatches = new HashMap<>();
+
+        
+
+        Map<String, SpendingPattern> patterns = new HashMap<>();        for (String keyword : keywords) {
+
+        
+
+        SpendingPattern weeklyPattern = analyzeWeeklyPattern(transactions);            List<Transaction> historicalTransactions =         // Search for historical transactions with similar keywords
+
+        if (weeklyPattern != null) {
+
+            patterns.put("WEEKLY_RECURRING", weeklyPattern);                transactionRepository.findByDescriptionContainingIgnoreCase(keyword);        for (String keyword : keywords) {
+
+        }
+
+                                List<Transaction> historicalTransactions = 
+
+        return patterns;
+
+    }            for (Transaction historical : historicalTransactions) {                transactionRepository.findByDescriptionContainingIgnoreCase(keyword);
+
+
+
+    public List<CategoryRecommendation> recommendCategoryOptimization(String categoryId) {                if (historical.getCategoryId() != null) {            
+
+        List<CategoryRecommendation> recommendations = new ArrayList<>();
+
+                            categoryMatches.merge(historical.getCategoryId(), 1, Integer::sum);            for (Transaction historical : historicalTransactions) {
+
+        List<Transaction> transactions = transactionRepository.findByCategoryId(categoryId);
+
+        if (transactions.isEmpty()) {                }                if (historical.getCategoryId() != null) {
+
+            return recommendations;
+
+        }            }                    categoryMatches.merge(historical.getCategoryId(), 1, Integer::sum);
+
+        
+
+        BigDecimal totalSpent = transactions.stream()        }                }
+
+            .map(Transaction::getAmount)
+
+            .reduce(BigDecimal.ZERO, BigDecimal::add);            }
+
+        
+
+        BigDecimal averageTransaction = totalSpent        // Return category with most matches        }
+
+            .divide(BigDecimal.valueOf(transactions.size()), 2, java.math.RoundingMode.HALF_UP);
+
+                return categoryMatches.entrySet().stream()
+
+        if (averageTransaction.compareTo(new BigDecimal("100")) > 0) {
+
+            recommendations.add(new CategoryRecommendation(            .max(Map.Entry.comparingByValue())        // Return category with most matches
+
+                RecommendationType.INCREASE_BUDGET,
+
+                "Hohe durchschnittliche Ausgaben erkannt. Budget erhöhen erwägen.",            .map(Map.Entry::getKey)        return categoryMatches.entrySet().stream()
+
+                averageTransaction
+
+            ));            .orElse(null);            .max(Map.Entry.comparingByValue())
+
+        }
+
+            }            .map(Map.Entry::getKey)
+
+        return recommendations;
+
+    }            .orElse(null);
+
+
+
+    private String[] extractKeywords(String description) {    /**    }
+
+        if (description == null || description.isEmpty()) {
+
+            return new String[0];     * Enhanced prediction with confidence score
+
+        }
+
+        return description.toLowerCase().split("[\\s\\-_.,;:]+");     */    /**
+
+    }
+
+    public CategoryPrediction predictCategoryWithConfidence(Transaction transaction) {     * Enhanced prediction with confidence score
+
+    private SpendingPattern analyzeWeeklyPattern(List<Transaction> transactions) {
+
+        Map<Integer, Integer> weeklyFrequency = new HashMap<>();        String categoryId = predictCategory(transaction);     */
+
+        
+
+        for (Transaction transaction : transactions) {        if (categoryId == null) {    public CategoryPrediction predictCategoryWithConfidence(Transaction transaction) {
+
+            int dayOfWeek = transaction.getDate().getDayOfWeek().getValue();
+
+            weeklyFrequency.merge(dayOfWeek, 1, Integer::sum);            return null;        String categoryId = predictCategory(transaction);
+
+        }
+
+                }        if (categoryId == null) {
+
+        int maxFrequency = weeklyFrequency.values().stream().mapToInt(Integer::intValue).max().orElse(0);
+
+        if (maxFrequency > transactions.size() * 0.7) {            return null;
+
+            return new SpendingPattern(PatternType.WEEKLY, maxFrequency, "Wöchentliches Muster erkannt");
+
+        }        // Calculate confidence based on historical data volume        }
+
+        
+
+        return null;        String[] keywords = extractKeywords(transaction.getDescription());
+
+    }
+
+        int totalMatches = 0;        // Calculate confidence based on historical data volume
+
+    // Inner Classes
+
+    public static class CategoryPrediction {                String[] keywords = extractKeywords(transaction.getDescription());
+
+        private final String categoryId;
+
+        private final double confidenceScore;        for (String keyword : keywords) {        int totalMatches = 0;
+
+        
+
+        public CategoryPrediction(String categoryId, double confidenceScore) {            List<Transaction> historicalTransactions =         
+
+            this.categoryId = categoryId;
+
+            this.confidenceScore = confidenceScore;                transactionRepository.findByDescriptionContainingIgnoreCase(keyword);        for (String keyword : keywords) {
+
+        }
+
+                    totalMatches += historicalTransactions.size();            List<Transaction> historicalTransactions = 
+
+        public String getCategoryId() { return categoryId; }
+
+        public double getConfidenceScore() { return confidenceScore; }        }                transactionRepository.findByDescriptionContainingIgnoreCase(keyword);
+
+    }
+
+            totalMatches += historicalTransactions.size();
+
+    public static class SpendingPattern {
+
+        private final PatternType type;        double confidence = Math.min(1.0, totalMatches / 10.0); // Max confidence at 10+ matches        }
+
+        private final int frequency;
+
+        private final String description;        
+
+        
+
+        public SpendingPattern(PatternType type, int frequency, String description) {        return new CategoryPrediction(categoryId, confidence);        double confidence = Math.min(1.0, totalMatches / 10.0); // Max confidence at 10+ matches
+
+            this.type = type;
+
+            this.frequency = frequency;    }        
+
+            this.description = description;
+
+        }        return new CategoryPrediction(categoryId, confidence);
+
+        
+
+        public PatternType getType() { return type; }    /**    }
+
+        public int getFrequency() { return frequency; }
+
+        public String getDescription() { return description; }     * Get top category predictions
+
+    }
+
+     */    /**
+
+    public enum PatternType {
+
+        WEEKLY, MONTHLY, DAILY, IRREGULAR    public List<CategoryPrediction> predictTopCategories(Transaction transaction, int limit) {     * Get top category predictions
+
+    }
+
+        if (transaction == null || transaction.getDescription() == null) {     */
+
+    public static class CategoryRecommendation {
+
+        private final RecommendationType type;            return new ArrayList<>();    public List<CategoryPrediction> predictTopCategories(Transaction transaction, int limit) {
+
+        private final String message;
+
+        private final BigDecimal relevantAmount;        }        if (transaction == null || transaction.getDescription() == null) {
+
+        
+
+        public CategoryRecommendation(RecommendationType type, String message, BigDecimal relevantAmount) {            return new ArrayList<>();
+
+            this.type = type;
+
+            this.message = message;        String[] keywords = extractKeywords(transaction.getDescription());        }
+
+            this.relevantAmount = relevantAmount;
+
+        }        Map<String, Integer> categoryMatches = new HashMap<>();
+
+        
+
+        public RecommendationType getType() { return type; }        String[] keywords = extractKeywords(transaction.getDescription());
+
+        public String getMessage() { return message; }
+
+        public BigDecimal getRelevantAmount() { return relevantAmount; }        for (String keyword : keywords) {        Map<String, Integer> categoryMatches = new HashMap<>();
+
+    }
+
+            List<Transaction> historicalTransactions = 
+
+    public enum RecommendationType {
+
+        INCREASE_BUDGET, DECREASE_BUDGET, CONSOLIDATE_PURCHASES, SPLIT_CATEGORY                transactionRepository.findByDescriptionContainingIgnoreCase(keyword);        for (String keyword : keywords) {
+
+    }
+
+}                        List<Transaction> historicalTransactions = 
+
+            for (Transaction historical : historicalTransactions) {                transactionRepository.findByDescriptionContainingIgnoreCase(keyword);
+
+                if (historical.getCategoryId() != null) {            
+
+                    categoryMatches.merge(historical.getCategoryId(), 1, Integer::sum);            for (Transaction historical : historicalTransactions) {
+
+                }                if (historical.getCategoryId() != null) {
+
+            }                    categoryMatches.merge(historical.getCategoryId(), 1, Integer::sum);
+
+        }                }
+
+            }
+
+        return categoryMatches.entrySet().stream()        }
+
+            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+
+            .limit(limit)        return categoryMatches.entrySet().stream()
+
+            .map(entry -> {            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+
+                double confidence = Math.min(1.0, entry.getValue() / 10.0);            .limit(limit)
+
+                return new CategoryPrediction(entry.getKey(), confidence);            .map(entry -> {
+
+            })                double confidence = Math.min(1.0, entry.getValue() / 10.0);
+
+            .collect(Collectors.toList());                return new CategoryPrediction(entry.getKey(), confidence);
+
+    }            })
+
+            .collect(Collectors.toList());
+
+    // TDD IMPLEMENTATION: Ausgaben-Pattern Erkennung    }
+
+
+
+    /**    // TDD IMPLEMENTATION: Ausgaben-Pattern Erkennung
+
+     * Analyze spending patterns for a category
+
+     */    /**
+
+    public Map<String, SpendingPattern> analyzeSpendingPatterns(String categoryId) {     * Analyze spending patterns for a category
+
+        LocalDateTime endDate = LocalDateTime.now();     */
+
+        LocalDateTime startDate = endDate.minusMonths(3); // 3 Monate Analyse    public Map<String, SpendingPattern> analyzeSpendingPatterns(String categoryId) {
+
+                LocalDateTime endDate = LocalDateTime.now();
+
+        List<Transaction> transactions = transactionRepository        LocalDateTime startDate = endDate.minusMonths(3); // 3 Monate Analyse
+
+            .findByCategoryIdAndDateBetween(categoryId, startDate, endDate);        
+
+                List<Transaction> transactions = transactionRepository
+
+        Map<String, SpendingPattern> patterns = new HashMap<>();            .findByCategoryIdAndDateBetween(categoryId, startDate, endDate);
+
+                
+
+        // Weekly pattern analysis        Map<String, SpendingPattern> patterns = new HashMap<>();
+
+        SpendingPattern weeklyPattern = analyzeWeeklyPattern(transactions);        
+
+        if (weeklyPattern != null) {        // Weekly pattern analysis
+
+            patterns.put("WEEKLY_RECURRING", weeklyPattern);        SpendingPattern weeklyPattern = analyzeWeeklyPattern(transactions);
+
+        }        if (weeklyPattern != null) {
+
+                    patterns.put("WEEKLY_RECURRING", weeklyPattern);
+
+        // Monthly pattern analysis          }
+
+        SpendingPattern monthlyPattern = analyzeMonthlyPattern(transactions);        
+
+        if (monthlyPattern != null) {        // Monthly pattern analysis  
+
+            patterns.put("MONTHLY_RECURRING", monthlyPattern);        SpendingPattern monthlyPattern = analyzeMonthlyPattern(transactions);
+
+        }        if (monthlyPattern != null) {
+
+                    patterns.put("MONTHLY_RECURRING", monthlyPattern);
+
+        return patterns;        }
+
+    }        
+
+        return patterns;
+
+    // TDD IMPLEMENTATION: Optimierungs-Empfehlungen    }
+
+
+
+    /**    // TDD IMPLEMENTATION: Optimierungs-Empfehlungen
+
+     * Recommend category optimizations
+
+     */    /**
+
+    public List<CategoryRecommendation> recommendCategoryOptimization(String categoryId) {     * Recommend category optimizations
+
+        List<CategoryRecommendation> recommendations = new ArrayList<>();     */
+
+            public List<CategoryRecommendation> recommendCategoryOptimization(String categoryId) {
+
+        List<Transaction> transactions = transactionRepository.findByCategoryId(categoryId);        List<CategoryRecommendation> recommendations = new ArrayList<>();
+
+        if (transactions.isEmpty()) {        
+
+            return recommendations;        List<Transaction> transactions = transactionRepository.findByCategoryId(categoryId);
+
+        }        if (transactions.isEmpty()) {
+
+                    return recommendations;
+
+        BigDecimal totalSpent = transactions.stream()        }
+
+            .map(Transaction::getAmount)        
+
+            .reduce(BigDecimal.ZERO, BigDecimal::add);        BigDecimal totalSpent = transactions.stream()
+
+                    .map(Transaction::getAmount)
+
+        BigDecimal averageTransaction = totalSpent            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            .divide(BigDecimal.valueOf(transactions.size()), 2, java.math.RoundingMode.HALF_UP);        
+
+                BigDecimal averageTransaction = totalSpent
+
+        // High spending recommendation            .divide(BigDecimal.valueOf(transactions.size()), 2, RoundingMode.HALF_UP);
+
+        if (averageTransaction.compareTo(new BigDecimal("100")) > 0) {        
+
+            recommendations.add(new CategoryRecommendation(        // High spending recommendation
+
+                RecommendationType.INCREASE_BUDGET,        if (averageTransaction.compareTo(new BigDecimal("100")) > 0) {
+
+                "Hohe durchschnittliche Ausgaben erkannt. Budget erhöhen erwägen.",            recommendations.add(new CategoryRecommendation(
+
+                averageTransaction                RecommendationType.INCREASE_BUDGET,
+
+            ));                "Hohe durchschnittliche Ausgaben erkannt. Budget erhöhen erwägen.",
+
+        }                averageTransaction
+
+                    ));
+
+        // Frequent small transactions        }
+
+        if (transactions.size() > 20 && averageTransaction.compareTo(new BigDecimal("10")) < 0) {        
+
+            recommendations.add(new CategoryRecommendation(        // Frequent small transactions
+
+                RecommendationType.CONSOLIDATE_PURCHASES,        if (transactions.size() > 20 && averageTransaction.compareTo(new BigDecimal("10")) < 0) {
+
+                "Viele kleine Transaktionen. Einkäufe bündeln könnte sparen.",            recommendations.add(new CategoryRecommendation(
+
+                averageTransaction                RecommendationType.CONSOLIDATE_PURCHASES,
+
+            ));                "Viele kleine Transaktionen. Einkäufe bündeln könnte sparen.",
+
+        }                averageTransaction
+
+                    ));
+
+        return recommendations;        }
+
+    }        
+
+        return recommendations;
+
+    // HELPER METHODS    }
+
+
+
+    private String[] extractKeywords(String description) {    // HELPER METHODS
+
+        if (description == null || description.isEmpty()) {
+
+            return new String[0];    private String[] extractKeywords(String description) {
+
+        }        return description.toLowerCase()
+
+        return description.toLowerCase()            .split("[\\s\\-_.,;:]+")
+
+            .split("[\\s\\-_.,;:]+");            .length > 0 ? description.toLowerCase().split("[\\s\\-_.,;:]+") : new String[]{description};
+
+    }    }
+
+
+
+    private SpendingPattern analyzeWeeklyPattern(List<Transaction> transactions) {    private SpendingPattern analyzeWeeklyPattern(List<Transaction> transactions) {
+
+        // Simplistic weekly pattern detection        // Simplistic weekly pattern detection
+
+        Map<Integer, Integer> weeklyFrequency = new HashMap<>();        Map<Integer, Integer> weeklyFrequency = new HashMap<>();
+
+                
+
+        for (Transaction transaction : transactions) {        for (Transaction transaction : transactions) {
+
+            int dayOfWeek = transaction.getDate().getDayOfWeek().getValue();            int dayOfWeek = transaction.getDate().getDayOfWeek().getValue();
+
+            weeklyFrequency.merge(dayOfWeek, 1, Integer::sum);            weeklyFrequency.merge(dayOfWeek, 1, Integer::sum);
+
+        }        }
+
+                
+
+        // If 70%+ transactions happen on same day of week        // If 70%+ transactions happen on same day of week
+
+        int maxFrequency = weeklyFrequency.values().stream().mapToInt(Integer::intValue).max().orElse(0);        int maxFrequency = weeklyFrequency.values().stream().mapToInt(Integer::intValue).max().orElse(0);
+
+        if (maxFrequency > transactions.size() * 0.7) {        if (maxFrequency > transactions.size() * 0.7) {
+
+            return new SpendingPattern(PatternType.WEEKLY, maxFrequency, "Wöchentliches Muster erkannt");            return new SpendingPattern(PatternType.WEEKLY, maxFrequency, "Wöchentliches Muster erkannt");
+
+        }        }
+
+                
+
+        return null;        return null;
+
+    }    }
+
+
+
+    private SpendingPattern analyzeMonthlyPattern(List<Transaction> transactions) {    private SpendingPattern analyzeMonthlyPattern(List<Transaction> transactions) {
+
+        // Simplistic monthly pattern detection        // Simplistic monthly pattern detection
+
+        Map<Integer, Integer> monthlyFrequency = new HashMap<>();        Map<Integer, Integer> monthlyFrequency = new HashMap<>();
+
+                
+
+        for (Transaction transaction : transactions) {        for (Transaction transaction : transactions) {
+
+            int dayOfMonth = transaction.getDate().getDayOfMonth();            int dayOfMonth = transaction.getDate().getDayOfMonth();
+
+            int weekOfMonth = (dayOfMonth - 1) / 7 + 1; // Group by week of month            int weekOfMonth = (dayOfMonth - 1) / 7 + 1; // Group by week of month
+
+            monthlyFrequency.merge(weekOfMonth, 1, Integer::sum);            monthlyFrequency.merge(weekOfMonth, 1, Integer::sum);
+
+        }        }
+
+                
+
+        int maxFrequency = monthlyFrequency.values().stream().mapToInt(Integer::intValue).max().orElse(0);        int maxFrequency = monthlyFrequency.values().stream().mapToInt(Integer::intValue).max().orElse(0);
+
+        if (maxFrequency > transactions.size() * 0.6) {        if (maxFrequency > transactions.size() * 0.6) {
+
+            return new SpendingPattern(PatternType.MONTHLY, maxFrequency, "Monatliches Muster erkannt");            return new SpendingPattern(PatternType.MONTHLY, maxFrequency, "Monatliches Muster erkannt");
+
+        }        }
+
+                
+
+        return null;        return null;
+
+    }    }
+
+
+
+    // INNER CLASSES für TDD    // INNER CLASSES für TDD
+
+
+
+    public static class CategoryPrediction {    public static class CategoryPrediction {
+
+        private final String categoryId;        private final String categoryId;
+
+        private final double confidenceScore;        private final double confidenceScore;
+
+                
+
+        public CategoryPrediction(String categoryId, double confidenceScore) {        public CategoryPrediction(String categoryId, double confidenceScore) {
+
+            this.categoryId = categoryId;            this.categoryId = categoryId;
+
+            this.confidenceScore = confidenceScore;            this.confidenceScore = confidenceScore;
+
+        }        }
+
+                
+
+        public String getCategoryId() { return categoryId; }        public String getCategoryId() { return categoryId; }
+
+        public double getConfidenceScore() { return confidenceScore; }        public double getConfidenceScore() { return confidenceScore; }
+
+    }    }
+
+
+
+    public static class SpendingPattern {    public static class SpendingPattern {
+
+        private final PatternType type;        private final PatternType type;
+
+        private final int frequency;        private final int frequency;
+
+        private final String description;        private final String description;
+
+                
+
+        public SpendingPattern(PatternType type, int frequency, String description) {        public SpendingPattern(PatternType type, int frequency, String description) {
+
+            this.type = type;            this.type = type;
+
+            this.frequency = frequency;            this.frequency = frequency;
+
+            this.description = description;            this.description = description;
+
+        }        }
+
+                
+
+        public PatternType getType() { return type; }        public PatternType getType() { return type; }
+
+        public int getFrequency() { return frequency; }        public int getFrequency() { return frequency; }
+
+        public String getDescription() { return description; }        public String getDescription() { return description; }
+
+    }    }
+
+
+
+    public enum PatternType {    public enum PatternType {
+
+        WEEKLY, MONTHLY, DAILY, IRREGULAR        WEEKLY, MONTHLY, DAILY, IRREGULAR
+
+    }    }
+
+
+
+    public static class CategoryRecommendation {    public static class CategoryRecommendation {
+
+        private final RecommendationType type;        private final RecommendationType type;
+
+        private final String message;        private final String message;
+
+        private final BigDecimal relevantAmount;        private final BigDecimal relevantAmount;
+
+                
+
+        public CategoryRecommendation(RecommendationType type, String message, BigDecimal relevantAmount) {        public CategoryRecommendation(RecommendationType type, String message, BigDecimal relevantAmount) {
+
+            this.type = type;            this.type = type;
+
+            this.message = message;            this.message = message;
+
+            this.relevantAmount = relevantAmount;            this.relevantAmount = relevantAmount;
+
+        }        }
+
+                
+
+        public RecommendationType getType() { return type; }        public RecommendationType getType() { return type; }
+
+        public String getMessage() { return message; }        public String getMessage() { return message; }
+
+        public BigDecimal getRelevantAmount() { return relevantAmount; }        public BigDecimal getRelevantAmount() { return relevantAmount; }
+
+    }    }
+
+
+
+    public enum RecommendationType {    public enum RecommendationType {
+
+        INCREASE_BUDGET, DECREASE_BUDGET, CONSOLIDATE_PURCHASES, SPLIT_CATEGORY        INCREASE_BUDGET, DECREASE_BUDGET, CONSOLIDATE_PURCHASES, SPLIT_CATEGORY,
+
+    }        URGENT_REDUCE, MODERATE_REDUCE, CAN_INCREASE, MAINTAIN
+
+}    }
+
+    public enum CategoryRiskLevel {
+        SAFE, WARNING, CRITICAL, EMERGENCY
+    }
+
+    public static class SpendingHealthScore {
+        private final double score;
+        private final String description;
+        private final CategoryRiskLevel riskLevel;
+        
+        public SpendingHealthScore(double score, String description, CategoryRiskLevel riskLevel) {
+            this.score = score;
+            this.description = description;
+            this.riskLevel = riskLevel;
+        }
+        
+        public double getScore() { return score; }
+        public String getDescription() { return description; }
+        public CategoryRiskLevel getRiskLevel() { return riskLevel; }
     }
 
     /**
@@ -205,6 +1025,18 @@ public class SmartCategoryService {
     /**
      * Determine risk level based on multiple factors
      */
+    private CategoryRiskLevel determineRiskLevel(BigDecimal spendingVelocity, BigDecimal remainingSafeBudget, long daysRemaining) {
+        // Risk based on spending velocity
+        if (spendingVelocity.compareTo(new BigDecimal("2.0")) > 0) {
+            return CategoryRiskLevel.EMERGENCY; // Spending 2x+ the safe rate
+        } else if (spendingVelocity.compareTo(new BigDecimal("1.5")) > 0) {
+            return CategoryRiskLevel.CRITICAL; // Spending 1.5x+ the safe rate
+        } else if (spendingVelocity.compareTo(new BigDecimal("1.2")) > 0) {
+            return CategoryRiskLevel.WARNING; // Spending 1.2x+ the safe rate
+        } else {
+            return CategoryRiskLevel.SAFE; // Spending within safe limits
+        }
+    }
     private CategoryRiskLevel determineRiskLevel(BigDecimal spendingVelocity, BigDecimal remainingBudget, long daysRemaining) {
         if (spendingVelocity.compareTo(new BigDecimal("2.0")) > 0 || remainingBudget.compareTo(BigDecimal.ZERO) <= 0) {
             return CategoryRiskLevel.CRITICAL;
@@ -382,52 +1214,5 @@ public class SmartCategoryService {
         public int getTransactionCount() { return transactionCount; }
     }
 
-    public static class CategoryRecommendation {
-        private final String categoryId;
-        private final RecommendationType type;
-        private final String message;
-        private final BigDecimal recommendedDailyLimit;
 
-        public CategoryRecommendation(String categoryId, RecommendationType type, String message, BigDecimal recommendedDailyLimit) {
-            this.categoryId = categoryId;
-            this.type = type;
-            this.message = message;
-            this.recommendedDailyLimit = recommendedDailyLimit;
-        }
-
-        // Getters
-        public String getCategoryId() { return categoryId; }
-        public RecommendationType getType() { return type; }
-        public String getMessage() { return message; }
-        public BigDecimal getRecommendedDailyLimit() { return recommendedDailyLimit; }
-    }
-
-    public static class SpendingHealthScore {
-        private final int score;
-        private final String message;
-        private final HealthLevel level;
-
-        public SpendingHealthScore(int score, String message, HealthLevel level) {
-            this.score = score;
-            this.message = message;
-            this.level = level;
-        }
-
-        // Getters
-        public int getScore() { return score; }
-        public String getMessage() { return message; }
-        public HealthLevel getLevel() { return level; }
-    }
-
-    public enum CategoryRiskLevel {
-        VERY_LOW, LOW, MODERATE, HIGH, CRITICAL
-    }
-
-    public enum RecommendationType {
-        URGENT_REDUCE, MODERATE_REDUCE, MAINTAIN, CAN_INCREASE
-    }
-
-    public enum HealthLevel {
-        CRITICAL, POOR, FAIR, GOOD, EXCELLENT, UNKNOWN
-    }
 }
